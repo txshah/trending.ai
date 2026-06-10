@@ -1,4 +1,7 @@
 # trending.ai
+ADD Produced by magnific mcp and our business + polymarket trending context  
+https://github.com/user-attachments/assets/359fe5ab-21c6-4902-a321-9d49a5b0e912
+
 <img width="1273" height="827" alt="Screenshot 2026-06-10 at 2 28 52 PM" src="https://github.com/user-attachments/assets/f841b257-1a49-4a16-9ae0-496b0b27cf2a" />
 <img width="1309" height="815" alt="Screenshot 2026-06-10 at 2 29 18 PM" src="https://github.com/user-attachments/assets/49c6f64c-c0d2-48e7-99b2-5ab411bd77b8" />
 
