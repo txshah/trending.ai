@@ -72,7 +72,7 @@ adk run content_agent
 Pídele: *"Procesa la primera tendencia"*. Revisa tu Gmail, responde el correo
 (APROBAR / DENEGAR / EDITAR: ...) y observa cómo el agente reacciona.
 
-## Contrato con tvesah (`trends_input/trends.json`)
+## Contrato con tvesha (`trends_input/trends.json`)
 
 | campo          | descripción                                        |
 |----------------|----------------------------------------------------|
