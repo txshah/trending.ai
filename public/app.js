@@ -2,7 +2,7 @@ const state = {
   business: null,
   media: [],
   trends: [],
-  runs: [],
+  lastRun: null,
   activeView: "accountView",
   activeTag: "all",
 };
@@ -28,6 +28,9 @@ const elements = {
   mediaInput: document.querySelector("#mediaInput"),
   mediaList: document.querySelector("#mediaList"),
   findTrendsButton: document.querySelector("#findTrendsButton"),
+  searchingOverlay: document.querySelector("#searchingOverlay"),
+  overlayEyebrow: document.querySelector("#overlayEyebrow"),
+  overlayHeading: document.querySelector("#overlayHeading"),
   trendStatus: document.querySelector("#trendStatus"),
   trendCount: document.querySelector("#trendCount"),
   visibleTrendCount: document.querySelector("#visibleTrendCount"),
@@ -60,8 +63,8 @@ async function refreshAccount() {
   const payload = await api("/api/account");
   state.business = payload.business;
   state.media = payload.media || [];
-  state.trends = payload.latestTrends || [];
-  state.runs = payload.trendRuns || [];
+  state.trends = [];
+  state.lastRun = payload.lastTrendRun || null;
   render();
 }
 
@@ -78,24 +81,31 @@ function switchView(viewId) {
 async function saveBusiness(event) {
   event.preventDefault();
   setAccountStatus("Saving");
-  const updates = {
-    businessName: elements.businessNameInput.value.trim(),
-    industry: elements.industryInput.value.trim(),
-    startedDate: elements.startedDateInput.value,
-    audience: elements.audienceInput.value.trim(),
-    whatTheyDo: elements.whatTheyDoInput.value.trim(),
-    keywords: elements.keywordsInput.value,
-    preferredTrendTags: readPreferredTags(),
-    facts: readFactsEditor(),
-  };
-  const payload = await api("/api/business", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updates),
-  });
-  state.business = payload.business;
-  setAccountStatus("Saved");
-  renderAccount();
+  elements.overlayEyebrow.textContent = "Account";
+  elements.overlayHeading.textContent = "Saving profile";
+  elements.searchingOverlay.classList.add("is-visible");
+  try {
+    const updates = {
+      businessName: elements.businessNameInput.value.trim(),
+      industry: elements.industryInput.value.trim(),
+      startedDate: elements.startedDateInput.value,
+      audience: elements.audienceInput.value.trim(),
+      whatTheyDo: elements.whatTheyDoInput.value.trim(),
+      keywords: elements.keywordsInput.value,
+      preferredTrendTags: readPreferredTags(),
+      facts: readFactsEditor(),
+    };
+    const payload = await api("/api/business", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+    state.business = payload.business;
+    setAccountStatus("Saved");
+    renderAccount();
+  } finally {
+    elements.searchingOverlay.classList.remove("is-visible");
+  }
 }
 
 async function uploadMedia(event) {
@@ -122,12 +132,15 @@ async function deleteMedia(id) {
 async function findTrends() {
   setTrendStatus("Finding");
   elements.findTrendsButton.disabled = true;
+  elements.overlayEyebrow.textContent = "Polymarket";
+  elements.overlayHeading.textContent = "Searching for trends";
+  elements.searchingOverlay.classList.add("is-visible");
   try {
     const payload = await api("/api/trends/find", { method: "POST" });
     state.trends = payload.trends;
-    state.runs = [payload.run, ...state.runs].slice(0, 10);
+    state.lastRun = payload.run;
     state.activeTag = "all";
-    setTrendStatus("Saved");
+    setTrendStatus("Done");
     renderTrends();
     renderMetrics();
   } catch (error) {
@@ -135,6 +148,7 @@ async function findTrends() {
     setTrendStatus("Error");
   } finally {
     elements.findTrendsButton.disabled = false;
+    elements.searchingOverlay.classList.remove("is-visible");
   }
 }
 
@@ -242,8 +256,8 @@ function renderMetrics() {
   const visible = getVisibleTrends();
   elements.trendCount.textContent = state.trends.length;
   elements.visibleTrendCount.textContent = visible.length;
-  elements.lastRun.textContent = state.runs[0]
-    ? new Date(state.runs[0].fetchedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+  elements.lastRun.textContent = state.lastRun
+    ? new Date(state.lastRun.fetchedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
     : "Never";
 }
 
