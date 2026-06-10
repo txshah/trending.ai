@@ -393,8 +393,7 @@ function enrichTrends(trends, business) {
       const preferredTagMatch = preferredTagMatches.length > 0;
       const relevanceScore = Math.min(
         100,
-        (preferredTagMatch ? 28 : 0) +
-          Math.min(matchingTerms.length * 8, 32) +
+        Math.min(matchingTerms.length * 8, 32) +
           volumeBonus(trend.volume24h) +
           probabilityBonus(trend.probability)
       );
@@ -410,7 +409,7 @@ function enrichTrends(trends, business) {
         ],
       };
     })
-    .sort((a, b) => b.relevanceScore - a.relevanceScore || b.volume24h - a.volume24h || b.volumeTotal - a.volumeTotal);
+    .sort((a, b) => b.volume24h - a.volume24h || b.volumeTotal - a.volumeTotal);
 }
 
 async function appendTrendsCsv(run, business, trends) {

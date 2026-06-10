@@ -5,7 +5,6 @@ const state = {
   runs: [],
   activeView: "accountView",
   activeTag: "all",
-  sortBy: "relevance",
 };
 
 const CANONICAL_TREND_TAGS = ["sports", "politics", "crypto", "tech", "economy", "culture", "general"];
@@ -33,7 +32,6 @@ const elements = {
   trendCount: document.querySelector("#trendCount"),
   visibleTrendCount: document.querySelector("#visibleTrendCount"),
   lastRun: document.querySelector("#lastRun"),
-  sortSelect: document.querySelector("#sortSelect"),
   tagFilters: document.querySelector("#tagFilters"),
   trendTable: document.querySelector("#trendTable"),
 };
@@ -56,10 +54,6 @@ function bindEvents() {
   });
   elements.mediaInput.addEventListener("change", uploadMedia);
   elements.findTrendsButton.addEventListener("click", findTrends);
-  elements.sortSelect.addEventListener("change", () => {
-    state.sortBy = elements.sortSelect.value;
-    renderTrends();
-  });
 }
 
 async function refreshAccount() {
@@ -261,7 +255,7 @@ function renderTrends() {
   if (trends.length === 0) {
     elements.trendTable.innerHTML = `
       <tr>
-        <td class="empty-state" colspan="5">No trends yet</td>
+        <td class="empty-state" colspan="3">No trends yet</td>
       </tr>
     `;
     return;
@@ -271,14 +265,12 @@ function renderTrends() {
     .map(
       (trend) => `
         <tr>
-          <td><span class="score-badge">${Math.round(trend.relevanceScore)}</span></td>
           <td><div class="tag-cell">${trend.tags.slice(0, 3).map(renderTag).join("")}</div></td>
           <td>
             <a class="trend-title" href="${escapeHtml(trend.url)}" target="_blank" rel="noreferrer">${escapeHtml(trend.title)}</a>
             <span class="trend-meta">${escapeHtml(formatCloseTime(trend.closeTime))}</span>
           </td>
           <td>${formatNumber(trend.volume24h)}</td>
-          <td>${renderBusinessFit(trend)}</td>
         </tr>
       `
     )
@@ -312,12 +304,7 @@ function getVisibleTrends() {
     state.activeTag === "all"
       ? [...state.trends]
       : state.trends.filter((trend) => (trend.tags || []).includes(state.activeTag));
-  return filtered.sort((a, b) => {
-    if (state.sortBy === "volume") return b.volume24h - a.volume24h;
-    if (state.sortBy === "probability") return b.probability - a.probability;
-    if (state.sortBy === "closing") return closeTimeValue(a.closeTime) - closeTimeValue(b.closeTime);
-    return b.relevanceScore - a.relevanceScore || b.volume24h - a.volume24h;
-  });
+  return filtered.sort((a, b) => b.volume24h - a.volume24h || b.volumeTotal - a.volumeTotal);
 }
 
 async function api(url, options = {}) {
@@ -341,16 +328,6 @@ function renderTag(tag) {
   return `<span class="tag">${escapeHtml(tag)}</span>`;
 }
 
-function renderBusinessFit(trend) {
-  const matches = trend.preferredTagMatches || [];
-  if (matches.length > 0) {
-    return `<div class="fit-cell"><strong>Preferred</strong><span>${escapeHtml(matches.join(", "))}</span></div>`;
-  }
-  if ((trend.matchingTerms || []).length > 0) {
-    return `<div class="fit-cell"><strong>Keyword</strong><span>${escapeHtml(trend.matchingTerms.join(", "))}</span></div>`;
-  }
-  return `<div class="fit-cell"><strong>General</strong><span>${escapeHtml(state.business.businessName)}</span></div>`;
-}
 
 function formatCloseTime(value) {
   if (!value) return "No close date";
@@ -359,10 +336,6 @@ function formatCloseTime(value) {
   return `Closes ${date.toLocaleDateString([], { month: "short", day: "numeric" })}`;
 }
 
-function closeTimeValue(value) {
-  const time = new Date(value).getTime();
-  return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
-}
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en", {
