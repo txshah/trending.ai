@@ -1,0 +1,5 @@
+google-adk>=1.31,<2
+google-api-python-client>=2.0
+google-auth-oauthlib>=1.2
+google-auth-httplib2>=0.2
+# Magnific MCP se conecta vía `npx mcp-remote` (Node), no es dependencia de Python.
