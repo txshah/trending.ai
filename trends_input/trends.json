@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-06-10T12:00:00Z",
+  "source": "static-fallback",
+  "trends": [
+    {
+      "id": "trend-001",
+      "topic": "Polymarket odds of a July Fed rate cut jump to 62%",
+      "summary": "Polymarket traders pushed the probability of a July Fed rate cut from 48% to 62% in 24 hours after softer-than-expected inflation data.",
+      "angle": "Surprising data point delivered as an authentic, energetic creator hot-take with a strong scroll-stopping hook.",
+      "platform": "instagram_reels_tiktok",
+      "content_type": "video",
+      "format": "short_form_vertical",
+      "aspect_ratio": "9:16",
+      "duration_seconds": 15,
+      "language": "en-US",
+      "recommended_model": "bytedance-seedance-pro-2.0",
+      "script_hook": "Wait — the market just changed its mind about the Fed overnight.",
+      "hashtags": ["#Polymarket", "#FedRateCut", "#Markets", "#FinTok", "#MoneyTok"],
+      "visual_prompt": "Short-form VERTICAL 9:16 UGC video for Instagram Reels and TikTok, shot to look like authentic, organic iPhone selfie content — NOT a polished ad. SUBJECT: a charismatic, relatable Gen-Z creator in their mid-20s talking straight into a handheld front-facing phone camera with high, genuine energy, expressive hands and natural micro-movements. PERFORMANCE: they react with real surprise to a breaking finance story, opening with the punchy hook 'Wait — the market just changed its mind about the Fed overnight,' then keeping fast, conversational momentum. SETTING: a cozy, lived-in apartment with warm, soft natural window light, plants and everyday clutter softly blurred in a shallow-focus background. CAMERA: vertical 9:16, eye-level selfie framing, subtle handheld shake, slight push-ins, shallow depth of field, crisp modern smartphone look. GRAPHICS: bold kinetic on-screen captions pop in sync with the voice, and a clean animated data graphic shows the Fed rate-cut probability spiking from 48% to 62% with an upward arrow. EDITING: fast, punchy jump cuts, trend-aware pacing, a current upbeat trending audio bed. MOOD: confident, fun, native social energy, scroll-stopping. No watermarks, no logos, no garbled text."
+    }
+  ]
+}

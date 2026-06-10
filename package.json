@@ -1,0 +1,10 @@
+{
+  "name": "trending-ai-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Node dashboard (Polymarket trends) for trending.ai",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

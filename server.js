@@ -13,6 +13,45 @@ const DB_PATH = path.join(DATA_DIR, "dashboard-db.json");
 const BUSINESS_CSV_PATH = path.join(DATA_DIR, "business.csv");
 const TRENDS_CSV_PATH = path.join(DATA_DIR, "trends.csv");
 let dbWriteQueue = Promise.resolve();
+
+// --- Auto-launch the content agent when the front refreshes trends ---
+// After new trends are pulled, fire the ADK content_agent to process the top
+// trend (generate the UGC video + send the Gmail review email). Fire-and-forget
+// so the dashboard response is not blocked by the long async video generation.
+// Toggle off with AGENT_AUTORUN=0. Requires `adk web` running at AGENT_URL.
+const AGENT_URL = process.env.AGENT_URL || "http://localhost:8001";
+const AGENT_AUTORUN = process.env.AGENT_AUTORUN !== "0";
+
+async function triggerAgentRun(run) {
+  if (!AGENT_AUTORUN) return;
+  const sessionId = `auto-${run.id.slice(0, 8)}`;
+  try {
+    await fetch(`${AGENT_URL}/apps/content_agent/users/auto/sessions/${sessionId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    // Fire-and-forget: do NOT await the run (video generation takes minutes).
+    fetch(`${AGENT_URL}/run`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        appName: "content_agent",
+        userId: "auto",
+        sessionId,
+        newMessage: {
+          role: "user",
+          parts: [{
+            text: "Process the top trend end to end, fully autonomously. Do not ask any questions; use sensible defaults from the trend and the brand context.",
+          }],
+        },
+      }),
+    }).catch((err) => console.log(`[auto-agent] run error: ${err.message}`));
+    console.log(`[auto-agent] triggered content_agent for trends run ${run.id.slice(0, 8)} (session ${sessionId})`);
+  } catch (err) {
+    console.log(`[auto-agent] could not reach agent at ${AGENT_URL}: ${err.message}`);
+  }
+}
 const CANONICAL_TREND_TAGS = ["sports", "politics", "crypto", "tech", "economy", "culture", "general"];
 
 const MIME_TYPES = {
@@ -152,6 +191,8 @@ async function handleRequest(req, res) {
       spawnSnapshotScript();
       sendJson(res, 200, { run, trends });
     });
+    // Auto-launch the content agent on the freshly refreshed trends.
+    triggerAgentRun(run);
     return;
   }
 
