@@ -1,6 +1,6 @@
 [
   {
-    "generated_at": "2026-06-10T20:56:10.438458+00:00",
+    "generated_at": "2026-06-10T21:01:52.564710+00:00",
     "business_name": "Olive & Oak",
     "industry": "Neighborhood restaurant",
     "started_date": "2021-05-14",
@@ -19,26 +19,9 @@
       "brunch",
       "dinner"
     ],
-    "preferred_trend_tags": [
-      "culture",
-      "sports",
-      "tech"
-    ],
     "media_files": [
       "data/uploads/6db61c50-ef83-4ca2-bfde-169cbe106d22.png"
     ],
-    "trend_source": "polymarket",
-    "trend_id": "30615",
-    "trend_title": "World Cup Winner ",
-    "trend_category": "Soccer",
-    "trend_tags": [
-      "sports"
-    ],
-    "trend_volume_24h": 88632211.394497,
-    "trend_volume_total": 1910044833.478194,
-    "trend_probability": 0.164,
-    "trend_close_time": "2026-07-20T00:00:00Z",
-    "trend_url": "https://polymarket.com/event/world-cup-winner",
     "topic": "Polymarket: World Cup Winner ",
     "summary": "Polymarket market on \"World Cup Winner \" is sitting at 16% probability with $88,632,211 in 24h volume \u2014 a live sports signal worth watching.",
     "angle": "action moment, exciting tone",
@@ -51,7 +34,7 @@
     "visual_prompt": "dynamic sports editorial illustration, bold colors, motion blur effect, stadium atmosphere, energetic composition, no text"
   },
   {
-    "generated_at": "2026-06-10T20:56:10.438458+00:00",
+    "generated_at": "2026-06-10T21:01:52.564710+00:00",
     "business_name": "Olive & Oak",
     "industry": "Neighborhood restaurant",
     "started_date": "2021-05-14",
@@ -70,26 +53,9 @@
       "brunch",
       "dinner"
     ],
-    "preferred_trend_tags": [
-      "culture",
-      "sports",
-      "tech"
-    ],
     "media_files": [
       "data/uploads/6db61c50-ef83-4ca2-bfde-169cbe106d22.png"
     ],
-    "trend_source": "polymarket",
-    "trend_id": "27830",
-    "trend_title": "2026 NBA Champion",
-    "trend_category": "Sports",
-    "trend_tags": [
-      "sports"
-    ],
-    "trend_volume_24h": 444018.30945600005,
-    "trend_volume_total": 418584272.82398504,
-    "trend_probability": 0.001,
-    "trend_close_time": "2026-07-01T00:00:00Z",
-    "trend_url": "https://polymarket.com/event/2026-nba-champion",
     "topic": "Polymarket: 2026 NBA Champion",
     "summary": "Polymarket market on \"2026 NBA Champion\" is sitting at 0% probability with $444,018 in 24h volume \u2014 a live sports signal worth watching.",
     "angle": "action moment, exciting tone",
@@ -102,7 +68,7 @@
     "visual_prompt": "dynamic sports editorial illustration, bold colors, motion blur effect, stadium atmosphere, energetic composition, no text"
   },
   {
-    "generated_at": "2026-06-10T20:56:10.438458+00:00",
+    "generated_at": "2026-06-10T21:01:52.564710+00:00",
     "business_name": "Olive & Oak",
     "industry": "Neighborhood restaurant",
     "started_date": "2021-05-14",
@@ -121,26 +87,9 @@
       "brunch",
       "dinner"
     ],
-    "preferred_trend_tags": [
-      "culture",
-      "sports",
-      "tech"
-    ],
     "media_files": [
       "data/uploads/6db61c50-ef83-4ca2-bfde-169cbe106d22.png"
     ],
-    "trend_source": "polymarket",
-    "trend_id": "27829",
-    "trend_title": "2026 NHL Stanley Cup Champion ",
-    "trend_category": "Sports",
-    "trend_tags": [
-      "sports"
-    ],
-    "trend_volume_24h": 167906.90268899998,
-    "trend_volume_total": 82239450.30408785,
-    "trend_probability": 0.58,
-    "trend_close_time": "2026-06-30T00:00:00Z",
-    "trend_url": "https://polymarket.com/event/2026-nhl-stanley-cup-champion",
     "topic": "Polymarket: 2026 NHL Stanley Cup Champion ",
     "summary": "Polymarket market on \"2026 NHL Stanley Cup Champion \" is sitting at 58% probability with $167,907 in 24h volume \u2014 a live sports signal worth watching.",
     "angle": "action moment, exciting tone",

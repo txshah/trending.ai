@@ -157,7 +157,6 @@ def main() -> None:
 
     rows = [
         {
-            # Business context (repeated per row)
             "generated_at": generated_at,
             "business_name": business.get("businessName"),
             "industry": business.get("industry"),
@@ -165,20 +164,7 @@ def main() -> None:
             "audience": business.get("audience"),
             "what_they_do": business.get("whatTheyDo"),
             "keywords": business.get("keywords", []),
-            "preferred_trend_tags": sorted(preferred_tags),
             "media_files": media_files,
-            # Raw trend data
-            "trend_source": signal.source,
-            "trend_id": signal.trend_id,
-            "trend_title": signal.title,
-            "trend_category": signal.category,
-            "trend_tags": tags,
-            "trend_volume_24h": signal.volume_24h,
-            "trend_volume_total": signal.volume_total,
-            "trend_probability": signal.probability,
-            "trend_close_time": signal.close_time,
-            "trend_url": signal.url,
-            # Content brief (hardcoded decisions v1)
             "topic": make_topic(signal),
             "summary": make_summary(signal, tags),
             "angle": make_angle(tags),
@@ -192,6 +178,7 @@ def main() -> None:
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    # Always overwrite — no appending
     out_path.write_text(json.dumps(rows, indent=2))
     print(f"Snapshot saved → {out_path}  ({len(rows)} rows, filtered from {len(signals)} total)")
 
