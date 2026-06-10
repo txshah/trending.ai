@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-06-10T12:00:00Z",
+  "trends": [
+    {
+      "id": "trend-001",
+      "topic": "Polymarket: probabilidad de recorte de tasas en julio sube a 62%",
+      "summary": "El mercado de Polymarket movió la probabilidad de un recorte de tasas de la Fed en julio del 48% al 62% en 24h tras datos de inflación más suaves.",
+      "angle": "dato sorprendente, tono informativo con gancho",
+      "platform": "twitter",
+      "content_type": "image",
+      "hashtags": ["#Polymarket", "#Fed", "#Tasas", "#Mercados"],
+      "visual_prompt": "ilustración editorial estilo portada de periódico financiero, gráfico de probabilidad subiendo del 48% al 62%, paleta sobria azul y dorado, limpio y moderno, sin texto"
+    }
+  ]
+}

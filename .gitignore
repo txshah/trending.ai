@@ -1,0 +1,19 @@
+# Secretos / credenciales — NUNCA commitear
+.env
+content_agent/.env
+service_account.json
+credentials.json
+token.json
+*.key.json
+
+# Salidas del agente
+output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# MCP / mcp-remote token cache
+.mcp-auth/
