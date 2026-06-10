@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
+const { spawn } = require("child_process");
 
 const PORT = Number(process.env.PORT || 3000);
 const ROOT = __dirname;
@@ -9,7 +10,8 @@ const PUBLIC_DIR = path.join(ROOT, "public");
 const DATA_DIR = path.join(ROOT, "data");
 const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 const DB_PATH = path.join(DATA_DIR, "dashboard-db.json");
-const TRENDS_CSV_PATH = path.join(DATA_DIR, "business-trend-runs.csv");
+const BUSINESS_CSV_PATH = path.join(DATA_DIR, "business.csv");
+const TRENDS_CSV_PATH = path.join(DATA_DIR, "trends.csv");
 let dbWriteQueue = Promise.resolve();
 const CANONICAL_TREND_TAGS = ["sports", "politics", "crypto", "tech", "economy", "culture", "general"];
 
@@ -99,6 +101,7 @@ async function handleRequest(req, res) {
       const db = await readDb();
       db.business = normalizeBusiness({ ...db.business, ...updates });
       await writeDb(db);
+      await writeBusinessCsv(db.business, db.media);
       sendJson(res, 200, { business: db.business });
     });
     return;
@@ -110,6 +113,7 @@ async function handleRequest(req, res) {
       const db = await readDb();
       db.media.unshift(upload);
       await writeDb(db);
+      await writeBusinessCsv(db.business, db.media);
       sendJson(res, 201, { media: db.media, item: upload });
     });
     return;
@@ -125,6 +129,7 @@ async function handleRequest(req, res) {
         await fs.unlink(path.join(ROOT, item.path)).catch(() => {});
       }
       await writeDb(db);
+      await writeBusinessCsv(db.business, db.media);
       sendJson(res, 200, { media: db.media });
     });
     return;
@@ -133,19 +138,18 @@ async function handleRequest(req, res) {
   if (req.method === "POST" && url.pathname === "/api/trends/find") {
     const db = await readDb();
     const trends = await findTrends(db.business);
+    const run = {
+      id: crypto.randomUUID(),
+      fetchedAt: new Date().toISOString(),
+      source: "polymarket",
+      count: trends.length,
+    };
     await withDbWriteLock(async () => {
       const latestDb = await readDb();
-      const run = {
-        id: crypto.randomUUID(),
-        fetchedAt: new Date().toISOString(),
-        source: "polymarket",
-        count: trends.length,
-      };
-      latestDb.latestTrends = trends;
-      latestDb.trendRuns.unshift(run);
-      latestDb.trendRuns = latestDb.trendRuns.slice(0, 10);
+      latestDb.lastTrendRun = run;
       await writeDb(latestDb);
-      await appendTrendsCsv(run, latestDb.business, trends);
+      await writeTrendsCsv(run, trends);
+      spawnSnapshotScript();
       sendJson(res, 200, { run, trends });
     });
     return;
@@ -181,8 +185,7 @@ function normalizeDb(db) {
   return {
     business,
     media: media.map(normalizeMediaItem),
-    latestTrends: Array.isArray(db.latestTrends) ? db.latestTrends.map(normalizeTrendFromDb) : [],
-    trendRuns: Array.isArray(db.trendRuns) ? db.trendRuns : [],
+    lastTrendRun: db.lastTrendRun || null,
   };
 }
 
@@ -240,12 +243,6 @@ function normalizeMediaItem(item) {
   };
 }
 
-function normalizeTrendFromDb(trend) {
-  return {
-    ...trend,
-    tags: Array.isArray(trend.tags) ? trend.tags : normalizeTags([trend.category, trend.source]),
-  };
-}
 
 async function serveStatic(rawPathname, res) {
   const pathname = rawPathname === "/" ? "/index.html" : rawPathname;
@@ -412,16 +409,9 @@ function enrichTrends(trends, business) {
     .sort((a, b) => b.volume24h - a.volume24h || b.volumeTotal - a.volumeTotal);
 }
 
-async function appendTrendsCsv(run, business, trends) {
+async function writeTrendsCsv(run, trends) {
   const columns = [
-    "run_id",
     "fetched_at",
-    "business_name",
-    "business_industry",
-    "business_started_date",
-    "business_audience",
-    "business_what_they_do",
-    "preferred_trend_tags",
     "source",
     "trend_id",
     "title",
@@ -430,32 +420,13 @@ async function appendTrendsCsv(run, business, trends) {
     "url",
     "volume_24h",
     "volume_total",
-    "liquidity",
     "probability",
     "close_time",
     "status",
-    "relevance_score",
-    "preferred_tag_match",
-    "preferred_tag_matches",
-    "matching_terms",
-    "content_angles",
   ];
-  let exists = true;
-  try {
-    await fs.access(TRENDS_CSV_PATH);
-  } catch {
-    exists = false;
-  }
   const rows = trends.map((trend) =>
     [
-      run.id,
       run.fetchedAt,
-      business.businessName,
-      business.industry,
-      business.startedDate,
-      business.audience,
-      business.whatTheyDo,
-      business.preferredTrendTags.join("; "),
       trend.source,
       trend.trendId,
       trend.title,
@@ -464,21 +435,51 @@ async function appendTrendsCsv(run, business, trends) {
       trend.url,
       trend.volume24h,
       trend.volumeTotal,
-      trend.liquidity,
       trend.probability || "",
       trend.closeTime,
       trend.status,
-      trend.relevanceScore,
-      trend.preferredTagMatch ? "yes" : "no",
-      trend.preferredTagMatches.join("; "),
-      trend.matchingTerms.join("; "),
-      trend.contentAngles.join(" | "),
     ]
       .map(csvCell)
       .join(",")
   );
-  const content = `${exists ? "" : `${columns.join(",")}\n`}${rows.join("\n")}\n`;
-  await fs.appendFile(TRENDS_CSV_PATH, content);
+  await fs.writeFile(TRENDS_CSV_PATH, `${columns.join(",")}\n${rows.join("\n")}\n`);
+}
+
+async function writeBusinessCsv(business, media) {
+  const columns = [
+    "saved_at",
+    "business_name",
+    "industry",
+    "started_date",
+    "audience",
+    "what_they_do",
+    "keywords",
+    "preferred_trend_tags",
+    "facts",
+    "media_files",
+  ];
+  const row = [
+    new Date().toISOString(),
+    business.businessName,
+    business.industry,
+    business.startedDate,
+    business.audience,
+    business.whatTheyDo,
+    business.keywords.join("; "),
+    business.preferredTrendTags.join("; "),
+    business.facts.map((f) => `${f.label}: ${f.value}`).join("; "),
+    media.map((m) => m.path).join("; "),
+  ]
+    .map(csvCell)
+    .join(",");
+  await fs.writeFile(BUSINESS_CSV_PATH, `${columns.join(",")}\n${row}\n`);
+}
+
+function spawnSnapshotScript() {
+  const proc = spawn("python3", [path.join(ROOT, "scripts", "generate_snapshot.py")], { cwd: ROOT });
+  proc.stdout.on("data", (d) => console.log("[snapshot]", d.toString().trim()));
+  proc.stderr.on("data", (d) => console.error("[snapshot]", d.toString().trim()));
+  proc.on("error", (err) => console.error("[snapshot] failed to start:", err.message));
 }
 
 function extractPolymarketCategory(event) {

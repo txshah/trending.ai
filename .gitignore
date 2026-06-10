@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
+.env
 data/*.csv
-data/dashboard-db.json
+data/*.json
 data/uploads/*
 !data/uploads/.gitkeep
