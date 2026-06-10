@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>trending.ai dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Workspace">
+        <div class="brand">
+          <span class="brand-mark">t</span>
+          <span>trending.ai</span>
+        </div>
+
+        <section class="business-card">
+          <p class="eyebrow">One business</p>
+          <h1 id="sidebarBusinessName">Olive & Oak</h1>
+          <p id="sidebarIndustry"></p>
+        </section>
+
+        <nav class="nav-list" aria-label="Pages">
+          <button class="nav-button is-active" type="button" data-view-target="accountView">Account</button>
+          <button class="nav-button" type="button" data-view-target="trendsView">Latest Trends</button>
+        </nav>
+      </aside>
+
+      <section class="workspace">
+        <section id="accountView" class="view is-active">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h2>Business profile</h2>
+            </div>
+            <div id="accountStatus" class="status-pill">Ready</div>
+          </header>
+
+          <div class="account-grid">
+            <form id="businessForm" class="panel form-panel">
+              <div class="field-row">
+                <label>
+                  <span>Business name</span>
+                  <input id="businessNameInput" name="businessName" type="text" />
+                </label>
+                <label>
+                  <span>Industry</span>
+                  <input id="industryInput" name="industry" type="text" />
+                </label>
+              </div>
+
+              <div class="field-row">
+                <label>
+                  <span>Started date</span>
+                  <input id="startedDateInput" name="startedDate" type="date" />
+                </label>
+                <label>
+                  <span>Audience</span>
+                  <input id="audienceInput" name="audience" type="text" />
+                </label>
+              </div>
+
+              <label>
+                <span>What they do</span>
+                <textarea id="whatTheyDoInput" name="whatTheyDo" rows="4"></textarea>
+              </label>
+
+              <label>
+                <span>Keywords</span>
+                <input id="keywordsInput" name="keywords" type="text" />
+              </label>
+
+              <div class="tag-preference-editor">
+                <div class="panel-subheader">
+                  <h3>Preferred trend tags</h3>
+                </div>
+                <div id="preferredTagsList" class="preference-grid"></div>
+              </div>
+
+              <div class="facts-editor">
+                <div class="panel-subheader">
+                  <h3>Facts</h3>
+                  <button id="addFactButton" class="secondary-button" type="button">Add fact</button>
+                </div>
+                <div id="factsEditorList" class="facts-editor-list"></div>
+              </div>
+
+              <button class="primary-button" type="submit">Save profile</button>
+            </form>
+
+            <section class="panel media-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Source data</p>
+                  <h3>Images + videos</h3>
+                </div>
+                <label class="icon-button" title="Upload media">
+                  <span aria-hidden="true">＋</span>
+                  <input id="mediaInput" type="file" accept="image/*,video/*" />
+                </label>
+              </div>
+              <div id="mediaList" class="media-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="trendsView" class="view">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Polymarket</p>
+              <h2>Latest trends</h2>
+            </div>
+            <button id="findTrendsButton" class="primary-button" type="button">
+              <span aria-hidden="true">⌕</span>
+              <span>Find trends</span>
+            </button>
+          </header>
+
+          <div class="metric-strip">
+            <div>
+              <span id="trendCount">0</span>
+              <p>Trends</p>
+            </div>
+            <div>
+              <span id="visibleTrendCount">0</span>
+              <p>Visible</p>
+            </div>
+            <div>
+              <span id="lastRun">Never</span>
+              <p>Last run</p>
+            </div>
+          </div>
+
+          <section class="panel trend-panel">
+            <div class="panel-header controls-header">
+              <div>
+                <p class="eyebrow">Tagged markets</p>
+                <h3>Trend queue</h3>
+              </div>
+              <div class="trend-controls">
+                <label class="select-field">
+                  <span>Sort</span>
+                  <select id="sortSelect">
+                    <option value="relevance">Relevance</option>
+                    <option value="volume">24h volume</option>
+                    <option value="probability">Probability</option>
+                    <option value="closing">Closing soon</option>
+                  </select>
+                </label>
+                <div id="trendStatus" class="status-pill">Ready</div>
+              </div>
+            </div>
+
+            <div id="tagFilters" class="tag-filters"></div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Score</th>
+                    <th>Tags</th>
+                    <th>Market</th>
+                    <th>Volume 24h</th>
+                    <th>Business fit</th>
+                  </tr>
+                </thead>
+                <tbody id="trendTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+[project]
+name = "trending-ai"
+version = "0.1.0"
+description = "Prototype trend ingestion from prediction markets for business content planning."
+requires-python = ">=3.11"
+
+[project.scripts]
+trending-ai = "trending_ai.cli:main"
